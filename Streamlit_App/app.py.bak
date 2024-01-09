@@ -17,17 +17,17 @@ def crop_to_circle(image):
     return result
 
 # Title
-st.title("Assistente Pointer", color="orange")
+st.title("Co. Portfolio Creator")
 
 # Display a text box for input
-prompt = st.text_input("Em que posso ajudar?", max_chars=2000)
+prompt = st.text_input("Please enter your query?", max_chars=2000)
 prompt = prompt.strip()
 
 # Display a primary button for submission
-submit_button = st.button("Enviar", type="primary")
+submit_button = st.button("Submit", type="primary")
 
 # Display a button to end the session
-end_session_button = st.button("Finalizar sessão")
+end_session_button = st.button("End Session")
 
 # Sidebar for user input
 st.sidebar.title("Trace Data")
@@ -97,7 +97,7 @@ if end_session_button:
 
 
 # Display conversation history
-st.write("## Histórico de conversação")
+st.write("## Conversation History")
 
 for chat in reversed(st.session_state['history']):
     
@@ -127,3 +127,51 @@ for chat in reversed(st.session_state['history']):
         with col2_a:
             st.text_area("A:", value=chat["answer"], height=100, key=str(chat)+"a")
 
+
+# Example Prompts Section
+
+st.write("## Test Knowledge Base Prompts")
+st.markdown("""
+- "Give me a summary of financial market developments and open market operations in January 2023"
+
+- "Tell me the participants view on economic conditions and economic outlook"
+   
+- "Provide any important information I should know about inflation, or rising prices"
+   
+- "Tell me about the Staff Review of the Economic & financial Situation"
+
+""")
+
+st.write("## Test Action Group Prompts")
+st.markdown("""
+
+- "Create a portfolio with 3 companies in the real estate industry"
+
+- "Create portfolio of 3 companies that are in the technology industry"
+
+- "Provide more details on these companies"
+
+- "Create a new investment portfolio of companies"
+
+- "Do company research on TechStashNova Inc."
+
+""")
+
+st.write("## Test KB, AG, history Prompt")
+st.markdown("""
+- Send an email to test@example.com that includes the company portfolio and FOMC summary `(The logic for this method is not implemented to send emails)`             
+""")
+
+###Example Prompts
+#Tests action groups:
+#1-	Do a company research on TechNova Inc.
+#2-	Create me a portfolio with top 3 company profit earners. The companies need to be in the real estate industry.
+#3-	please provide more details on these companies
+#4-	create me another portfolio of top 3 company profit earners. They need to be in the technology industry
+#5-	please help me create a new investment portfolio of companies
+
+###Tests knowledge base:
+#6-	give me a summary of development in financial market and open market operations in january 2023
+#7-	what is the SEC participants view on current economic conditions and economic outlook for september 2023
+#8-	can you provide any other important information I should know about inflation, or rising prices?
+#9-	What can you tell me about the Staff Review of the Economic & financial Situation?

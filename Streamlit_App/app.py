@@ -17,7 +17,7 @@ def crop_to_circle(image):
     return result
 
 # Title
-st.title("Assistente Pointer", color="orange")
+st.title("Assistente Pointer")
 
 # Display a text box for input
 prompt = st.text_input("Em que posso ajudar?", max_chars=2000)

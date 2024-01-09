@@ -73,16 +73,20 @@ if submit_button and prompt:
     response_data = json.loads(response['body'])
     print("TRACE & RESPONSE DATA ->  ", json.loads(response['body']))
     
-    # Extract the response and trace data
-    all_data = format_response(response_data['response'])
-    the_response = response_data['trace_data']
+    # Check if 'response' key is present in response_data
+    if 'response' in response_data:
+        # Extract the response and trace data
+        all_data = format_response(response_data['response'])
+        the_response = response_data['trace_data']
 
-    # Use trace_data and formatted_response as needed
-    st.sidebar.text_area("Trace Data", value=all_data, height=300)
-    st.session_state['history'].append({"question": prompt, "answer": the_response})
-    st.session_state['trace_data'] = the_response
-
-    
+        # Use trace_data and formatted_response as needed
+        st.sidebar.text_area("Trace Data", value=all_data, height=300)
+        st.session_state['history'].append({"question": prompt, "answer": the_response})
+        st.session_state['trace_data'] = the_response
+    else:
+        # Handle the case when 'response' key is not present
+        st.sidebar.text("Error: 'response' key not found in the API response.")
+   
     
 
 if end_session_button:

@@ -30,10 +30,6 @@ submit_button = st.button("Enviar", type="primary")
 # Button to reset session
 reset_button = st.button("Resetar Sessão")
 
-# Reset session if the button is clicked
-if reset_button:
-    reset_session()
-
 # Display a button to end the session
 #end_session_button = st.button("Finalizar sessão")
 
@@ -58,6 +54,10 @@ if 'session_id' not in st.session_state:
 def reset_session():
     st.session_state['session_id'] = str(uuid.uuid4())
     st.session_state['history'] = []
+    
+# Reset session if the button is clicked
+if reset_button:
+    reset_session()
 
 
 # Function to parse and format response

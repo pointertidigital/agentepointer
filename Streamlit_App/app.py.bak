@@ -1,5 +1,6 @@
 import InvokeAgent as agenthelper
 import streamlit as st
+import uuid
 import json
 import pandas as pd
 from PIL import Image, ImageOps, ImageDraw
@@ -26,8 +27,15 @@ prompt = prompt.strip()
 # Display a primary button for submission
 submit_button = st.button("Enviar", type="primary")
 
+# Button to reset session
+reset_button = st.button("Resetar Sessão")
+
+# Reset session if the button is clicked
+if reset_button:
+    reset_session()
+
 # Display a button to end the session
-end_session_button = st.button("Finalizar sessão")
+#end_session_button = st.button("Finalizar sessão")
 
 # Sidebar for user input
 st.sidebar.title("Trace Data")
@@ -42,8 +50,15 @@ def filter_trace_data(trace_data, query):
     
 
 # Session State Management
-if 'history' not in st.session_state:
+if 'session_id' not in st.session_state:
+    st.session_state['session_id'] = str(uuid.uuid4())
     st.session_state['history'] = []
+
+# Function to reset session
+def reset_session():
+    st.session_state['session_id'] = str(uuid.uuid4())
+    st.session_state['history'] = []
+
 
 # Function to parse and format response
 def format_response(response_body):
@@ -79,25 +94,29 @@ if submit_button and prompt:
         all_data = format_response(response_data['response'])
         the_response = response_data['trace_data']
 
+        # Clear the conversation history before appending new items
+        st.session_state['history'] = []
+        
+        # Append the current question and answer to the conversation history
+        st.session_state['history'].append({"question": prompt, "answer": the_response})
+
         # Use trace_data and formatted_response as needed
         st.sidebar.text_area("Trace Data", value=all_data, height=300)
-        st.session_state['history'].append({"question": prompt, "answer": the_response})
         st.session_state['trace_data'] = the_response
     else:
         # Handle the case when 'response' key is not present
-        st.sidebar.text("Error: 'response' key not found in the API response.")
-   
+        st.sidebar.text("Error: 'response' key not found in the API response.")   
     
 
-if end_session_button:
-    st.session_state['history'].append({"question": "Session Ended", "answer": "Thank you for using AnyCompany Support Agent!"})
-    event = {
-        "sessionId": "MYSESSION",
-        "question": "placeholder to end session",
-        "endSession": True
-    }
-    agenthelper.lambda_handler(event, None)
-    st.session_state['history'].clear()
+#if end_session_button:
+    #st.session_state['history'].append({"question": "Session Ended", "answer": #"Obrigado por ajudar a testar o Assistente Pointer. :)"})
+#    event = {
+#        "sessionId": "MYSESSION",
+#        "question": "placeholder to end session",
+#        "endSession": True
+#    }
+#    agenthelper.lambda_handler(event, None)
+#    st.session_state['history'].clear()
 
 
 # Display conversation history

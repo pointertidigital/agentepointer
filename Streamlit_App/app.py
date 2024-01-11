@@ -110,15 +110,15 @@ if submit_button and prompt:
         st.sidebar.text("Error: 'response' key not found in the API response.")   
     
 
-if end_session_button:
-    st.session_state['history'].append({"question": "Session Ended", "answer": "Obrigado por ajudar a testar o Assistente Pointer. :)"})
-    event = {
-        "sessionId": sessionid,
-        "question": "placeholder to end session",
-        "endSession": True
-    }
-    agenthelper.lambda_handler(event, None)
-    st.session_state['history'].clear()
+#if end_session_button:
+#    st.session_state['history'].append({"question": "Session Ended", "answer": #"Obrigado por ajudar a testar o Assistente Pointer. :)"})
+#    event = {
+#        "sessionId": sessionid,
+#        "question": "placeholder to end session",
+#        "endSession": True
+#    }
+#    agenthelper.lambda_handler(event, None)
+#    st.session_state['history'].clear()
 
 
 # Display conversation history

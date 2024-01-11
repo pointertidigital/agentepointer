@@ -58,8 +58,8 @@ def reset_session():
     st.session_state['history'] = []
     
 # Reset session if the button is clicked
-if reset_button:
-    reset_session()
+#if reset_button:
+#    reset_session()
 
 
 # Function to parse and format response

@@ -30,13 +30,13 @@ prompt = prompt.strip()
 submit_button = st.button("Enviar", type="primary")
 
 # Button to reset session
-reset_button = st.button("Resetar Sessão")
+#reset_button = st.button("Resetar Sessão")
 
 # Display a button to end the session
-end_session_button = st.button("Finalizar sessão")
+#end_session_button = st.button("Finalizar sessão")
 
 # Sidebar for user input
-st.sidebar.title("Trace Data")
+st.sidebar.title("Processamento")
 
 
 def filter_trace_data(trace_data, query):
@@ -103,7 +103,7 @@ if submit_button and prompt:
         st.session_state['history'].append({"question": prompt, "answer": the_response})
 
         # Use trace_data and formatted_response as needed
-        st.sidebar.text_area("Trace Data", value=all_data, height=300)
+        st.sidebar.text_area("Tracing", value=all_data, height=300)
         st.session_state['trace_data'] = the_response
     else:
         # Handle the case when 'response' key is not present
@@ -122,7 +122,7 @@ if end_session_button:
 
 
 # Display conversation history
-st.write("## Histórico de conversação")
+st.write("## Output")
 
 for chat in reversed(st.session_state['history']):
     

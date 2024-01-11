@@ -8,6 +8,8 @@ from PIL import Image, ImageOps, ImageDraw
 # Streamlit page configuration
 st.set_page_config(page_title="Assistente Pointer", page_icon=":robot_face:", layout="wide")
 
+sessionid = str(uuid.uuid4())
+
 # Function to crop image into a circle
 def crop_to_circle(image):
     mask = Image.new('L', image.size, 0)
@@ -28,7 +30,7 @@ prompt = prompt.strip()
 submit_button = st.button("Enviar", type="primary")
 
 # Button to reset session
-reset_button = st.button("Resetar Sessão")
+#reset_button = st.button("Resetar Sessão")
 
 # Display a button to end the session
 #end_session_button = st.button("Finalizar sessão")
@@ -47,12 +49,12 @@ def filter_trace_data(trace_data, query):
 
 # Session State Management
 if 'session_id' not in st.session_state:
-    st.session_state['session_id'] = str(uuid.uuid4())
+    st.session_state['session_id'] = sessionid
     st.session_state['history'] = []
 
 # Function to reset session
 def reset_session():
-    st.session_state['session_id'] = str(uuid.uuid4())
+    st.session_state['session_id'] = sessionid
     st.session_state['history'] = []
     
 # Reset session if the button is clicked
@@ -79,7 +81,7 @@ def format_response(response_body):
 # Handling user input and responses
 if submit_button and prompt:
     event = {
-        "sessionId": "MYSESSION",
+        "sessionId": sessionid,
         "question": prompt
     }
     response = agenthelper.lambda_handler(event, None)
@@ -108,19 +110,19 @@ if submit_button and prompt:
         st.sidebar.text("Error: 'response' key not found in the API response.")   
     
 
-#if end_session_button:
-    #st.session_state['history'].append({"question": "Session Ended", "answer": #"Obrigado por ajudar a testar o Assistente Pointer. :)"})
-#    event = {
-#        "sessionId": "MYSESSION",
-#        "question": "placeholder to end session",
-#        "endSession": True
-#    }
-#    agenthelper.lambda_handler(event, None)
-#    st.session_state['history'].clear()
+if end_session_button:
+    st.session_state['history'].append({"question": "Session Ended", "answer": "Obrigado por ajudar a testar o Assistente Pointer. :)"})
+    event = {
+        "sessionId": sessionid,
+        "question": "placeholder to end session",
+        "endSession": True
+    }
+    agenthelper.lambda_handler(event, None)
+    st.session_state['history'].clear()
 
 
 # Display conversation history
-st.write("## Histórico de conversação")
+st.write("## Saída")
 
 for chat in reversed(st.session_state['history']):
     

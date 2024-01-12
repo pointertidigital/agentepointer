@@ -129,7 +129,7 @@ for chat in reversed(st.session_state['history']):
     # Creating columns for Question
     col1_q, col2_q = st.columns([2, 10])
     with col1_q:
-        human_image = Image.open('images/human_face.png')
+        human_image = Image.open('images/human_face.jpg')
         circular_human_image = crop_to_circle(human_image)
         st.image(circular_human_image, width=125)
     with col2_q:

@@ -19,6 +19,19 @@ def crop_to_circle(image):
     result.putalpha(mask)
     return result
     
+def format_response(response_body):
+    try:
+        # Try to load the response as JSON
+        data = json.loads(response_body)
+        # If it's a list, convert it to a DataFrame for better visualization
+        if isinstance(data, list):
+            return pd.DataFrame(data)
+        else:
+            return response_body
+    except json.JSONDecodeError:
+        # If response is not JSON, return as is
+        return response_body
+    
 # Function to check if the string is a link to an image
 def is_image_link(text):
     image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.webp']
@@ -57,30 +70,31 @@ while True:
         st.session_state['history'] = []
 
     # Handling user input and responses
-    event = {
-        "sessionId": sessionid,
-        "question": prompt
-    }
-    response = agenthelper.lambda_handler(event, None)
+    if submit_button and prompt:
+        event = {
+            "sessionId": sessionid,
+            "question": prompt
+        }
+        response = agenthelper.lambda_handler(event, None)
 
-    # Parse the JSON string
-    response_data = json.loads(response['body'])
+        # Parse the JSON string
+        response_data = json.loads(response['body'])
 
-    # Check if 'response' key is present in response_data
-    if 'response' in response_data:
-        # Extract the response and trace data
-        all_data = format_response(response_data['response'])
-        the_response = response_data['trace_data']
+        # Check if 'response' key is present in response_data
+        if 'response' in response_data:
+            # Extract the response and trace data
+            all_data = format_response(response_data['response'])
+            the_response = response_data['trace_data']
 
-        # Append the current question and answer to the conversation history
-        st.session_state['history'].append({"question": prompt, "answer": the_response})
+            # Append the current question and answer to the conversation history
+            st.session_state['history'].append({"question": prompt, "answer": the_response})
 
-        # Use trace_data and formatted_response as needed
-        st.sidebar.text_area("Tracing", value=all_data, height=300)
-        st.session_state['trace_data'] = the_response
-    else:
-        # Handle the case when 'response' key is not present
-        st.sidebar.text("Error: 'response' key not found in the API response.")
+            # Use trace_data and formatted_response as needed
+            st.sidebar.text_area("Tracing", value=all_data, height=300)
+            st.session_state['trace_data'] = the_response
+        else:
+            # Handle the case when 'response' key is not present
+            st.sidebar.text("Error: 'response' key not found in the API response.")
 
 # Display conversation history
 st.write("## Output")

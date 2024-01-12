@@ -6,7 +6,7 @@ import pandas as pd
 from PIL import Image, ImageOps, ImageDraw
 
 # Streamlit page configuration
-st.set_page_config(page_title="Assistente Pointer", page_icon=":robot_face:", layout="wide")
+st.set_page_config(page_title="PoC :: Assistente Pointer", page_icon=":robot_face:", layout="wide")
 
 sessionid = str(uuid.uuid4())
 
@@ -23,17 +23,14 @@ def crop_to_circle(image):
 st.title("Assistente Pointer")
 
 # Display a text box for input
-prompt = st.text_input("Em que posso ajudar?", max_chars=2000)
+prompt = st.text_input("Faça sua pergunta :)", max_chars=2000)
 prompt = prompt.strip()
 
 # Display a primary button for submission
 submit_button = st.button("Enviar", type="primary")
 
-# Button to reset session
-#reset_button = st.button("Resetar Sessão")
-
 # Display a button to end the session
-#end_session_button = st.button("Finalizar sessão")
+end_session_button = st.button("Finalizar sessão")
 
 # Sidebar for user input
 st.sidebar.title("Processamento")
@@ -48,19 +45,8 @@ def filter_trace_data(trace_data, query):
     
 
 # Session State Management
-if 'session_id' not in st.session_state:
-    st.session_state['session_id'] = sessionid
+if 'history' not in st.session_state:
     st.session_state['history'] = []
-
-# Function to reset session
-def reset_session():
-    st.session_state['session_id'] = sessionid
-    st.session_state['history'] = []
-    
-# Reset session if the button is clicked
-#if reset_button:
-#    reset_session()
-
 
 # Function to parse and format response
 def format_response(response_body):
@@ -90,39 +76,31 @@ if submit_button and prompt:
     response_data = json.loads(response['body'])
     print("TRACE & RESPONSE DATA ->  ", json.loads(response['body']))
     
-    # Check if 'response' key is present in response_data
-    if 'response' in response_data:
-        # Extract the response and trace data
-        all_data = format_response(response_data['response'])
-        the_response = response_data['trace_data']
+    # Extract the response and trace data
+    all_data = format_response(response_data['response'])
+    the_response = response_data['trace_data']
 
-        # Clear the conversation history before appending new items
-        st.session_state['history'] = []
-        
-        # Append the current question and answer to the conversation history
-        st.session_state['history'].append({"question": prompt, "answer": the_response})
+    # Use trace_data and formatted_response as needed
+    st.sidebar.text_area("Trace Data", value=all_data, height=300)
+    st.session_state['history'].append({"question": prompt, "answer": the_response})
+    st.session_state['trace_data'] = the_response
 
-        # Use trace_data and formatted_response as needed
-        st.sidebar.text_area("Tracing", value=all_data, height=300)
-        st.session_state['trace_data'] = the_response
-    else:
-        # Handle the case when 'response' key is not present
-        st.sidebar.text("Error: 'response' key not found in the API response.")   
+    
     
 
-#if end_session_button:
-#    st.session_state['history'].append({"question": "Session Ended", "answer": #"Obrigado por ajudar a testar o Assistente Pointer. :)"})
-#    event = {
-#        "sessionId": sessionid,
-#        "question": "placeholder to end session",
-#        "endSession": True
-#    }
-#    agenthelper.lambda_handler(event, None)
-#    st.session_state['history'].clear()
+if end_session_button:
+    st.session_state['history'].append({"question": "Session Ended", "answer": "obrigado por ajudar nesse teste!"})
+    event = {
+        "sessionId": sessionid,
+        "question": "placeholder to end session",
+        "endSession": True
+    }
+    agenthelper.lambda_handler(event, None)
+    st.session_state['history'].clear()
 
 
 # Display conversation history
-st.write("## Output")
+st.write("## Conversation History")
 
 for chat in reversed(st.session_state['history']):
     
